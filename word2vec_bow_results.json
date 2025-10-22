@@ -1,0 +1,192 @@
+[
+  {
+    "doc_vector_dimension": 50,
+    "word_vector_size": 50,
+    "n_word_clusters": 50,
+    "word_clustering_silhouette": 0.002762237563729286,
+    "doc_clustering_silhouette": 0.039368753947376565,
+    "cluster_summary": [
+      {
+        "cluster_id": 0,
+        "num_documents": 31,
+        "top_words": [
+          "new",
+          "energy",
+          "could",
+          "system",
+          "stores"
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "num_documents": 1,
+        "top_words": [
+          "hybrid",
+          "electric",
+          "stol",
+          "showcases",
+          "flexibility"
+        ]
+      },
+      {
+        "cluster_id": 2,
+        "num_documents": 6,
+        "top_words": [
+          "mit",
+          "researchers",
+          "treatment",
+          "geologists",
+          "discover"
+        ]
+      },
+      {
+        "cluster_id": 3,
+        "num_documents": 121,
+        "top_words": [
+          "new",
+          "drug",
+          "could",
+          "first",
+          "cells"
+        ]
+      },
+      {
+        "cluster_id": 4,
+        "num_documents": 41,
+        "top_words": [
+          "could",
+          "new",
+          "discovery",
+          "cancer",
+          "replace"
+        ]
+      }
+    ]
+  },
+  {
+    "doc_vector_dimension": 100,
+    "word_vector_size": 100,
+    "n_word_clusters": 100,
+    "word_clustering_silhouette": -0.014614284038543701,
+    "doc_clustering_silhouette": 0.03958721856990899,
+    "cluster_summary": [
+      {
+        "cluster_id": 0,
+        "num_documents": 17,
+        "top_words": [
+          "new",
+          "find",
+          "may",
+          "improve",
+          "helps"
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "num_documents": 19,
+        "top_words": [
+          "could",
+          "new",
+          "plant",
+          "make",
+          "eye"
+        ]
+      },
+      {
+        "cluster_id": 2,
+        "num_documents": 1,
+        "top_words": [
+          "engineering",
+          "fantasy",
+          "reality"
+        ]
+      },
+      {
+        "cluster_id": 3,
+        "num_documents": 141,
+        "top_words": [
+          "new",
+          "could",
+          "researchers",
+          "drug",
+          "cells"
+        ]
+      },
+      {
+        "cluster_id": 4,
+        "num_documents": 22,
+        "top_words": [
+          "cancer",
+          "species",
+          "colon",
+          "treatment",
+          "world"
+        ]
+      }
+    ]
+  },
+  {
+    "doc_vector_dimension": 200,
+    "word_vector_size": 200,
+    "n_word_clusters": 200,
+    "word_clustering_silhouette": -0.010169466957449913,
+    "doc_clustering_silhouette": 0.07258048573666694,
+    "cluster_summary": [
+      {
+        "cluster_id": 0,
+        "num_documents": 5,
+        "top_words": [
+          "new",
+          "system",
+          "materials",
+          "breathe",
+          "learns"
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "num_documents": 22,
+        "top_words": [
+          "brain",
+          "fusion",
+          "may",
+          "engineered",
+          "world"
+        ]
+      },
+      {
+        "cluster_id": 2,
+        "num_documents": 155,
+        "top_words": [
+          "new",
+          "could",
+          "drug",
+          "researchers",
+          "first"
+        ]
+      },
+      {
+        "cluster_id": 3,
+        "num_documents": 2,
+        "top_words": [
+          "engineering",
+          "fantasy",
+          "reality",
+          "watch",
+          "humanoid"
+        ]
+      },
+      {
+        "cluster_id": 4,
+        "num_documents": 16,
+        "top_words": [
+          "could",
+          "new",
+          "way",
+          "drones",
+          "enzyme"
+        ]
+      }
+    ]
+  }
+]

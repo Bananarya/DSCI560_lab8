@@ -3,22 +3,25 @@ import numpy as np
 from gensim.models import Word2Vec
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import normalize
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import silhouette_score,davies_bouldin_score
 import re
 from collections import Counter
 import warnings
+from nltk.corpus import stopwords
+import nltk
 warnings.filterwarnings('ignore')
 
 def load_and_preprocess_data(filepath='dataset.csv'):
     df = pd.read_csv(filepath)
-
     def preprocess_text(text):
         if pd.isna(text):
             return []
         text = text.lower()
         text = re.sub(r'[^a-z\s]', ' ', text)
         # Split into words and remove empty strings
-        words = [w for w in text.split() if len(w) > 2]
+        nltk.download('stopwords')
+        STOPWORDS = set(stopwords.words("english"))
+        words = [w for w in text.split() if len(w) > 2 and w not in STOPWORDS]
         return words
     
     df['processed_words'] = df['message'].apply(preprocess_text)
@@ -50,6 +53,7 @@ def cluster_words(word2vec_model, n_clusters):
     
     # Calculate silhouette score for clustering quality
     sil_score = silhouette_score(word_vectors, word_clusters)
+    #dav_score = davies_bouldin_score(word_vectors, word_clusters)
     
     return word_to_cluster, sil_score
 
@@ -80,13 +84,11 @@ def cluster_documents(bow_vectors, n_doc_clusters=5):
     
     # Calculate silhouette score
     sil_score = silhouette_score(bow_vectors, doc_clusters)
-    
-    return doc_clusters, sil_score
+    dav_score = davies_bouldin_score(bow_vectors, doc_clusters)
+    return doc_clusters, sil_score,dav_score
 
 def analyze_clusters(df, doc_clusters, word_to_cluster):
     df['doc_cluster'] = doc_clusters
-    
-    # Get cluster statistics
     cluster_stats = []
     for cluster_id in range(max(doc_clusters) + 1):
         cluster_docs = df[df['doc_cluster'] == cluster_id]
@@ -143,7 +145,7 @@ def main():
         print(f"Document vector shape: {bow_vectors.shape}")
         
         print("Clustering documents...")
-        doc_clusters, doc_cluster_score = cluster_documents(bow_vectors, n_doc_clusters=5)
+        doc_clusters, doc_cluster_score,doc_dav_score = cluster_documents(bow_vectors, n_doc_clusters=5)
         
         cluster_stats = analyze_clusters(df, doc_clusters, word_to_cluster)
         
@@ -153,6 +155,7 @@ def main():
             'n_word_clusters': n_clusters,
             'word_clustering_silhouette': word_cluster_score,
             'doc_clustering_silhouette': doc_cluster_score,
+            "doc_clustering_davies":doc_dav_score,
             'cluster_stats': cluster_stats
         }
         results.append(result)
@@ -174,18 +177,38 @@ def main():
     print("COMPARATIVE ANALYSIS")
     print("="*60)
     
+    # Identify best configuration
     best_config = max(results, key=lambda x: x['doc_clustering_silhouette'])
-    print(f"\nBest configuration based on document clustering quality:")
-    print(f"  Document vector dimension: {best_config['doc_vector_dimension']}")
-    print(f"  Document clustering silhouette score: {best_config['doc_clustering_silhouette']:.4f}")
     
-    print("\nSummary of all configurations:")
-    print("(These dimensions match the Doc2Vec experiments)")
+    # Prepare summary text
+    summary_lines = []
+    summary_lines.append("\nBest configuration based on document clustering quality:")
+    summary_lines.append(f"  Document vector dimension: {best_config['doc_vector_dimension']}")
+    summary_lines.append(f"  Document clustering silhouette score: {best_config['doc_clustering_silhouette']:.4f}")
+    summary_lines.append(f"  Document clustering silhouette score: {best_config['doc_clustering_davies']:.4f}")
+    
+    summary_lines.append("\nSummary of all configurations:")
+    summary_lines.append("(These dimensions match the Doc2Vec experiments)")
+    
     for result in results:
-        print(f"\nDocument vector dimension: {result['doc_vector_dimension']}")
-        print(f"  - Number of word clusters (K): {result['n_word_clusters']}")
-        print(f"  - Word clustering quality: {result['word_clustering_silhouette']:.4f}")
-        print(f"  - Document clustering quality: {result['doc_clustering_silhouette']:.4f}")
+        summary_lines.append(f"\nDocument vector dimension: {result['doc_vector_dimension']}")
+        summary_lines.append(f"  - Number of word clusters (K): {result['n_word_clusters']}")
+        summary_lines.append(f"  - Word clustering quality: {result['word_clustering_silhouette']:.4f}")
+        summary_lines.append(f"  - Document clustering quality(silhouette): {result['doc_clustering_silhouette']:.4f}")
+        summary_lines.append(f"  - Document clustering quality(Davies-Bouldin): {result['doc_clustering_davies']:.4f}")
+    
+    # Join all lines into a single string
+    summary_text = "\n".join(summary_lines)
+    
+    # Print to console
+    print(summary_text)
+    
+    # Save to TXT file
+    with open("word2vec_bow_summary.txt", "w") as f:
+        f.write(summary_text)
+    
+    print("\n✓ Summary saved to 'word2vec_bow_summary.txt'")
+
     
     return results
 

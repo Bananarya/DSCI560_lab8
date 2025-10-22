@@ -6,21 +6,27 @@ from sklearn.metrics import silhouette_score, davies_bouldin_score
 from sklearn.decomposition import PCA
 from collections import Counter
 import warnings
+import pandas as pd
+from nltk.corpus import stopwords
+import nltk
 warnings.filterwarnings('ignore')
 
 def load_data(filepath='dataset.csv'):
     df = pd.read_csv(filepath)
     return df
 
-def preprocess_text(text):
+def preprocess_text(text,stopwords):
     if pd.isna(text):
         return []
     # Convert to lowercase and split
-    return text.lower().split()
+    words = text.lower().split()
+    # Remove stopwords
+    words = [w for w in words if w not in stopwords]
+    return words
 
-def train_doc2vec_model(documents, vector_size=100, min_count=2, epochs=50, dm=1):
+def train_doc2vec_model(documents, stopwords,vector_size=100, min_count=2, epochs=50, dm=1):
     # Create tagged documents
-    tagged_docs = [TaggedDocument(preprocess_text(doc), [i]) 
+    tagged_docs = [TaggedDocument(preprocess_text(doc,stopwords), [i]) 
                    for i, doc in enumerate(documents)]
     
     # Initialize and train model
@@ -37,7 +43,7 @@ def train_doc2vec_model(documents, vector_size=100, min_count=2, epochs=50, dm=1
     model.train(tagged_docs, total_examples=model.corpus_count, epochs=model.epochs)
     
     # Generate document vectors
-    vectors = np.array([model.infer_vector(preprocess_text(doc)) 
+    vectors = np.array([model.infer_vector(preprocess_text(doc,stopwords)) 
                        for doc in documents])
     
     return model, vectors
@@ -52,7 +58,7 @@ def cluster_documents(vectors, n_clusters=5):
     
     return labels, silhouette, davies_bouldin, kmeans
 
-def analyze_clusters(df, labels, n_top_words=10):
+def analyze_clusters(df, stopwords,labels, n_top_words=10):
     df['cluster'] = labels
     cluster_analysis = []
     
@@ -63,7 +69,7 @@ def analyze_clusters(df, labels, n_top_words=10):
         all_words = []
         for msg in cluster_docs['message']:
             if pd.notna(msg):
-                all_words.extend(preprocess_text(msg))
+                all_words.extend(preprocess_text(msg,stopwords))
         
         # Find most common words
         word_freq = Counter(all_words)
@@ -80,7 +86,7 @@ def analyze_clusters(df, labels, n_top_words=10):
     
     return cluster_analysis
 
-def compare_configurations(df, configs):
+def compare_configurations(df, stopwords,configs):
     results = []
     
     for i, config in enumerate(configs):
@@ -97,6 +103,7 @@ def compare_configurations(df, configs):
         
         model, vectors = train_doc2vec_model(
             df['message'].tolist(),
+            stopwords,
             vector_size=config['vector_size'],
             min_count=config.get('min_count', 2),
             epochs=config.get('epochs', 50),
@@ -108,7 +115,7 @@ def compare_configurations(df, configs):
         print(f"Clustering documents into {n_clusters} clusters...")
         labels, silhouette, davies_bouldin, kmeans = cluster_documents(vectors, n_clusters)
         
-        cluster_analysis = analyze_clusters(df.copy(), labels)
+        cluster_analysis = analyze_clusters(df.copy(), stopwords,labels)
         
         result = {
             'config': config,
@@ -163,6 +170,10 @@ def evaluate_best_configuration(results):
     return best
 
 def main():
+    nltk.download('stopwords')
+
+# Define English stopword set once
+    STOPWORDS = set(stopwords.words("english"))
     df = load_data('dataset.csv')
     print(f"Loaded {len(df)} documents")
     
@@ -192,7 +203,7 @@ def main():
     ]
     
     # Compare configurations
-    results = compare_configurations(df, configurations)
+    results = compare_configurations(df,STOPWORDS, configurations)
     
     # Evaluate best configuration
     best_config = evaluate_best_configuration(results)

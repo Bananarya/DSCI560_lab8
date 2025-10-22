@@ -1,0 +1,20 @@
+DOC2VEC CONFIGURATION COMPARISON RESULTS
+============================================================
+
+Configuration: Vector Size = 50
+  Silhouette Score: 0.4172
+  Davies-Bouldin Score: 0.7362
+  Inertia: 4.62
+
+Configuration: Vector Size = 100
+  Silhouette Score: 0.4736
+  Davies-Bouldin Score: 0.6258
+  Inertia: 4.45
+
+Configuration: Vector Size = 200
+  Silhouette Score: 0.5007
+  Davies-Bouldin Score: 0.5851
+  Inertia: 4.81
+
+
+Best Configuration: Vector Size = 200

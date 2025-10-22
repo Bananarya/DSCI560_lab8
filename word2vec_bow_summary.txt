@@ -1,0 +1,26 @@
+
+Best configuration based on document clustering quality:
+  Document vector dimension: 200
+  Document clustering silhouette score: 0.0726
+  Document clustering silhouette score: 3.0065
+
+Summary of all configurations:
+(These dimensions match the Doc2Vec experiments)
+
+Document vector dimension: 50
+  - Number of word clusters (K): 50
+  - Word clustering quality: 0.0028
+  - Document clustering quality(silhouette): 0.0394
+  - Document clustering quality(Davies-Bouldin): 2.3657
+
+Document vector dimension: 100
+  - Number of word clusters (K): 100
+  - Word clustering quality: -0.0146
+  - Document clustering quality(silhouette): 0.0396
+  - Document clustering quality(Davies-Bouldin): 3.1549
+
+Document vector dimension: 200
+  - Number of word clusters (K): 200
+  - Word clustering quality: -0.0102
+  - Document clustering quality(silhouette): 0.0726
+  - Document clustering quality(Davies-Bouldin): 3.0065
